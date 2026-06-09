@@ -1,0 +1,38 @@
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Streamlit secrets and local config
+.streamlit/secrets.toml
+
+# Keep the example secrets template tracked
+!.streamlit/secrets.toml.example
+
+# IDE and editor files
+.vs/
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Test and coverage artifacts
+.pytest_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
