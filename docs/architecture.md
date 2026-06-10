@@ -2,81 +2,203 @@
 
 This document explains how the project is wired together.
 
-## Entry Flow
+The app has four main layers:
+
+```text
+Streamlit UI
+   |
+   v
+Screens and components
+   |
+   v
+Database helpers and AI pipelines
+   |
+   v
+Supabase database + local AI models
+```
+
+## Entry Point
 
 The app starts in `app.py`.
 
-High-level flow:
+`app.py` does three important things:
 
-1. Configure page title and icon
-2. Initialize `st.session_state.login_type`
-3. Render either home, teacher, or student screen
-4. Check for `join-code` in the query string
-5. Auto-open enrollment when the student comes through a shared link
+1. Configures the Streamlit page.
+2. Initializes `st.session_state["login_type"]`.
+3. Chooses which screen to show.
 
-## Screen Routing
+Simplified logic:
 
-Streamlit does not use normal page routing here. Instead, the app uses session state.
+```python
+match st.session_state["login_type"]:
+    case "teacher":
+        teacher_screen()
+    case "student":
+        student_screen()
+    case None:
+        home_screen()
+```
 
-Key value:
+This project does not use Streamlit's built-in multipage routing. Instead, it uses session state to decide which screen to render.
 
-- `login_type = None` shows the home screen
-- `login_type = "teacher"` shows teacher flows
-- `login_type = "student"` shows student flows
+## Streamlit Reruns
 
-## Module Map
+Streamlit reruns the script from top to bottom after many user actions, such as clicking a button or uploading a file.
 
-- `src/screens/home_screen.py`: landing choice between teacher and student
-- `src/screens/teacher_screen.py`: teacher login, dashboard, attendance, subject management
-- `src/screens/student_screen.py`: student login, registration, dashboard
-- `src/components/*`: dialogs, header, footer, cards
-- `src/database/db.py`: all Supabase reads and writes
-- `src/pipelines/face_pipeline.py`: face embeddings and classifier
-- `src/pipelines/voice_pipeline.py`: voice embeddings and speaker matching
-- `src/ui/base_layout.py`: CSS and visual layout styling
+That means normal Python variables may disappear between interactions. To keep important data, the app uses `st.session_state`.
 
-## Data Flow
+Examples:
 
-### Teacher Attendance
+- `login_type` remembers whether the user selected teacher or student mode.
+- `teacher_data` remembers the logged-in teacher.
+- `student_data` remembers the logged-in student.
+- `attendance_images` stores photos before attendance is confirmed.
+- `voice_attendance_results` stores voice results before saving.
 
-1. Teacher selects a subject
-2. Teacher uploads or captures classroom photos
-3. Face pipeline finds faces and predicts student IDs
-4. App compares detected IDs against enrolled students
-5. Review dialog appears
-6. Attendance rows are saved only after confirmation
+For a beginner explanation, read [`learning-concepts.md`](learning-concepts.md).
 
-### Student Login
+## Module Responsibilities
 
-1. Student uses the camera
-2. Face pipeline tries to identify the student
-3. If recognized, student logs in
-4. If not recognized, student can register
+### `app.py`
 
-### Enrollment
+The top-level app router.
 
-1. Student enters a subject code or uses a shared join link
-2. App looks up the subject
-3. App inserts into `subject_students`
+It decides whether to show:
 
-## Session State
+- `home_screen()`
+- `teacher_screen()`
+- `student_screen()`
 
-Important keys:
+It also checks the `join-code` query parameter for shared subject links.
 
-- `teacher_data`
-- `student_data`
-- `login_type`
-- `teacher_login_type`
-- `current_teacher_tab`
-- `attendance_images`
-- `voice_attendance_results`
-- `photo_tab`
+### `src/screens/`
 
-These are what keep the app feeling stateful while Streamlit reruns the script.
+Screen files hold page-level flows.
 
-## Why This Architecture Works
+- `home_screen.py`: lets the user choose student or teacher portal.
+- `teacher_screen.py`: handles teacher login, registration, dashboard tabs, attendance, subjects, and records.
+- `student_screen.py`: handles student face login, registration, dashboard, enrollment, and attendance stats.
 
-- It keeps UI code separated from database code
-- It keeps AI pipelines isolated from app screens
-- It uses small dialog components for actions that need confirmation
-- It keeps all backend reads and writes in one place
+### `src/components/`
+
+Component files hold reusable UI pieces.
+
+Examples:
+
+- subject cards
+- header and footer
+- create subject dialog
+- enrollment dialog
+- photo upload dialog
+- attendance result dialog
+- voice attendance dialog
+
+### `src/database/`
+
+Database files hold Supabase setup and helper functions.
+
+- `config.py` creates the Supabase client from Streamlit secrets.
+- `db.py` contains most database reads and writes.
+
+### `src/pipelines/`
+
+Pipeline files hold AI-specific logic.
+
+- `face_pipeline.py` handles face detection, embeddings, model training, and prediction.
+- `voice_pipeline.py` handles voice embeddings and speaker matching.
+
+### `src/ui/`
+
+UI helper files contain shared styling.
+
+- `base_layout.py` injects CSS into Streamlit pages.
+
+## End-To-End Flows
+
+## Home Screen Route Selection
+
+1. The app starts with `login_type = None`.
+2. `home_screen()` renders two choices: student and teacher.
+3. Clicking a portal button updates `st.session_state["login_type"]`.
+4. `st.rerun()` restarts the script.
+5. `app.py` now renders the selected screen.
+
+## Teacher Register/Login
+
+1. The teacher opens the teacher portal.
+2. `teacher_screen()` shows either login or registration.
+3. Registration calls `create_teacher()`.
+4. The password is hashed with bcrypt before saving.
+5. Login calls `teacher_login()`.
+6. If the password matches, teacher data is stored in `st.session_state.teacher_data`.
+7. The teacher dashboard appears.
+
+## Student Face Login/Register
+
+1. The student opens the student portal.
+2. Streamlit camera input captures a face photo.
+3. The image becomes a NumPy array.
+4. `predict_attendance()` tries to recognize the face.
+5. If a student ID is detected, the app loads that student and stores it in `st.session_state.student_data`.
+6. If not recognized, the registration form appears.
+7. Registration stores a face embedding and optional voice embedding.
+8. `train_classifier()` clears and refreshes the cached face classifier.
+
+## Manual Enrollment
+
+1. A logged-in student clicks `Enroll in Subject`.
+2. The student enters a subject code.
+3. The app looks up the subject in Supabase.
+4. The app checks whether the student is already enrolled.
+5. If not, it inserts into `subject_students`.
+
+## Shared-Link Enrollment
+
+1. A teacher shares a link with a `join-code` query parameter.
+2. `app.py` reads `st.query_params.get("join-code")`.
+3. If the user is not already in student mode, the app switches to the student portal.
+4. Once a student is logged in, `auto_enroll_dialog()` opens.
+5. The student confirms enrollment.
+6. The app inserts into `subject_students`.
+
+## Face Attendance
+
+1. Teacher selects a subject.
+2. Teacher adds photos with camera or upload.
+3. Photos are stored temporarily in `st.session_state.attendance_images`.
+4. Teacher runs face analysis.
+5. The app calls `predict_attendance()` for each image.
+6. Detected student IDs are compared against students enrolled in the selected subject.
+7. The app builds a review table.
+8. Attendance is saved only after confirmation.
+9. `create_attendance()` inserts rows into `attendance_logs`.
+
+## Voice Attendance
+
+1. Teacher selects a subject.
+2. Teacher opens voice attendance.
+3. Teacher records classroom audio.
+4. The app loads enrolled students with voice profiles.
+5. `process_bulk_audio()` splits audio into speech segments.
+6. Each segment is compared to stored voice embeddings.
+7. Detected students are marked present.
+8. Teacher confirms the review table.
+9. Attendance rows are inserted into `attendance_logs`.
+
+## Attendance Records Summary
+
+1. Teacher opens `Attendance Records`.
+2. The app fetches attendance logs for subjects owned by that teacher.
+3. The code builds a pandas DataFrame.
+4. Logs are grouped by timestamp, subject, and subject code.
+5. The table shows present count and total count.
+
+## Why This Architecture Works For Learning
+
+- UI code is separate from database helper code.
+- AI code is separate from Streamlit screen code.
+- Dialogs keep important actions focused.
+- Supabase access is mostly centralized in `db.py`.
+- Session state makes routing understandable without needing a larger web framework.
+
+For a guided file-by-file explanation, read [`code-walkthrough.md`](code-walkthrough.md).
