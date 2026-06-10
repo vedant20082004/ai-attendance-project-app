@@ -1,98 +1,73 @@
 # AI Attendance System
 
-This is a Streamlit application for AI-assisted classroom attendance.
+This is a learning project that demonstrates how an AI-assisted classroom attendance app can be built with Python, Streamlit, Supabase, face recognition, and optional voice recognition.
 
-It supports:
+The app is not meant to be production-ready. It is meant to help you understand how a real project can connect a user interface, a database, and AI pipelines.
 
-- Teacher login and registration
-- Student face-based login and registration
-- Subject creation and enrollment
-- Face-based attendance capture from classroom photos
-- Optional voice-based attendance
-- Supabase-backed storage for users, subjects, enrollments, and attendance logs
+## What The App Does
+
+- Teachers can register, log in, create subjects, share subject join codes, and take attendance.
+- Students can register or log in with their face.
+- Students can optionally record a voice sample for voice-based attendance.
+- Teachers can mark attendance from classroom photos or classroom audio.
+- Attendance records are stored in Supabase.
+
+## Main Technologies
+
+- Streamlit for the web interface
+- Supabase for database storage
+- dlib and `face_recognition_models` for face embeddings
+- scikit-learn for the face classifier
+- Resemblyzer and librosa for voice embeddings
+- bcrypt for teacher password hashing
+- pandas and NumPy for data handling
 
 ## Documentation
 
-The full setup and implementation guide lives in [`docs/`](docs/README.md).
+Start with the full docs in [`docs/README.md`](docs/README.md).
 
 Recommended reading order:
 
 1. [`docs/README.md`](docs/README.md)
 2. [`docs/getting-started.md`](docs/getting-started.md)
-3. [`docs/backend-schema.md`](docs/backend-schema.md)
-4. [`docs/architecture.md`](docs/architecture.md)
-5. [`docs/troubleshooting.md`](docs/troubleshooting.md)
+3. [`docs/learning-concepts.md`](docs/learning-concepts.md)
+4. [`docs/library-guide.md`](docs/library-guide.md)
+5. [`docs/backend-schema.md`](docs/backend-schema.md)
+6. [`docs/architecture.md`](docs/architecture.md)
+7. [`docs/code-walkthrough.md`](docs/code-walkthrough.md)
+8. [`docs/teacher-workflows.md`](docs/teacher-workflows.md)
+9. [`docs/student-workflows.md`](docs/student-workflows.md)
+10. [`docs/ai-pipelines.md`](docs/ai-pipelines.md)
+11. [`docs/troubleshooting.md`](docs/troubleshooting.md)
+12. [`docs/developer-guide.md`](docs/developer-guide.md)
 
 ## Quick Start
-
-### 1. Create a virtual environment
 
 ```powershell
 cd C:\Users\vedan\Downloads\ai-attendance-project-app
 py -3.11 -m venv .venv
 .\.venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip setuptools wheel
-```
-
-### 2. Install dependencies
-
-```powershell
 pip install -r requirements.txt
-```
-
-### 3. Configure secrets
-
-Create `.streamlit/secrets.toml`:
-
-```toml
-SUPABASE_URL = "https://your-project.supabase.co"
-SUPABASE_KEY = "your-supabase-anon-key"
-```
-
-### 4. Create the Supabase schema
-
-Run the SQL in [`docs/backend-schema.md`](docs/backend-schema.md) inside Supabase SQL editor.
-
-### 5. Start the app
-
-```powershell
 streamlit run app.py
 ```
 
-## Project Structure
+You also need a `.streamlit/secrets.toml` file with your Supabase project URL and anon key. The optional `APP_DOMAIN` secret controls shared subject links and QR codes. See [`docs/getting-started.md`](docs/getting-started.md) for the complete setup.
+
+## Project Layout
 
 ```text
 app.py
 src/
-  screens/
-  components/
-  database/
-  pipelines/
-  ui/
-docs/
-  getting-started.md
-  backend-schema.md
-  architecture.md
-  teacher-workflows.md
-  student-workflows.md
-  ai-pipelines.md
-  troubleshooting.md
-  developer-guide.md
+  __init__.py    marks src as a Python package
+  screens/       page-level teacher, student, and home screens
+  components/    reusable dialogs, cards, header, and footer
+  database/      Supabase connection and database helper functions
+  pipelines/     face and voice recognition logic
+  ui/            shared Streamlit styling
+docs/            beginner-friendly project documentation
 ```
 
-## Core Stack
+## Important Learning Note
 
-- Streamlit for the UI
-- Supabase for backend storage
-- dlib and face-recognition models for face embeddings
-- Resemblyzer and librosa for voice embeddings
-- scikit-learn for the face classifier
-- bcrypt for teacher passwords
-- segno for QR codes
-
-## Notes
-
-- Use the Supabase anon public key in local development
-- IDs are UUIDs, not integers
-- The app expects the five tables documented in [`docs/backend-schema.md`](docs/backend-schema.md)
-- If you hit install or runtime issues, start with [`docs/troubleshooting.md`](docs/troubleshooting.md)
+This project intentionally keeps many ideas visible in the code so learners can study them. A production attendance system would need stronger authentication, authorization, privacy controls, model evaluation, audit logs, deployment hardening, and security reviews.

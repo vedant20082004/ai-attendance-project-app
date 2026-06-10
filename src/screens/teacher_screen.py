@@ -102,7 +102,7 @@ def teacher_tab_take_attendance():
     subjects = get_teacher_subjects(teacher_id)
 
     if not subjects:
-        st.warning('You havent created any subjects yet! Please create one to begin!')
+        st.warning("You haven't created any subjects yet! Please create one to begin!")
         return
     
     subject_options = {f"{s['name']} - {s['subject_code']}": s['subject_id'] for s in subjects}
