@@ -1,6 +1,6 @@
 # Getting Started
 
-This guide explains how to run SnapClass from scratch on Windows.
+This guide explains how to run the project from scratch on Windows.
 
 ## What You Need
 
@@ -84,7 +84,7 @@ streamlit run app.py
 You should see:
 
 - local URL on port 8501
-- the SnapClass home screen
+- the home screen
 
 ## Step 6: Verify the Happy Path
 

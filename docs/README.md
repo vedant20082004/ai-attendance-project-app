@@ -1,6 +1,6 @@
-# SnapClass Docs
+# Project Docs
 
-SnapClass is a Streamlit app for taking attendance with face recognition and optional voice recognition.
+This project is a Streamlit app for taking attendance with face recognition and optional voice recognition.
 
 ## Who These Docs Are For
 

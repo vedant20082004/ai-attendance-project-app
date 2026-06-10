@@ -1,6 +1,6 @@
-# SnapClass
+# AI Attendance System
 
-SnapClass is a Streamlit application for AI-assisted classroom attendance.
+This is a Streamlit application for AI-assisted classroom attendance.
 
 It supports:
 

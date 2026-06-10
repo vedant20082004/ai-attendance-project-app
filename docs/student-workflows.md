@@ -1,6 +1,6 @@
 # Student Workflows
 
-This document explains the student side of SnapClass.
+This document explains the student side of the project.
 
 ## Student Login
 

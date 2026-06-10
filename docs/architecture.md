@@ -1,6 +1,6 @@
 # Architecture
 
-This document explains how SnapClass is wired together.
+This document explains how the project is wired together.
 
 ## Entry Flow
 

@@ -1,6 +1,6 @@
 # Backend Schema
 
-SnapClass uses Supabase as its backend. The code in `src/database/db.py` assumes a small relational schema.
+This project uses Supabase as its backend. The code in `src/database/db.py` assumes a small relational schema.
 
 ## Tables
 
