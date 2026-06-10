@@ -208,6 +208,8 @@ When a student opens that link:
 
 This flow is useful because students do not need to manually type the subject code.
 
+The teacher share dialog builds the link from optional `APP_DOMAIN` in `.streamlit/secrets.toml`. If that secret is not set, the app uses `localhost:8501` as the default local domain.
+
 ## Unenroll
 
 Students can unenroll from a subject on the dashboard.

@@ -27,9 +27,12 @@ Fix:
 ```toml
 SUPABASE_URL = "https://your-project.supabase.co"
 SUPABASE_KEY = "your_anon_public_key_here"
+APP_DOMAIN = "http://localhost:8501"
 ```
 
 3. Restart Streamlit.
+
+`APP_DOMAIN` is optional. If shared links or QR codes point to the wrong place, set it to the domain where your app is running.
 
 Read [`getting-started.md`](getting-started.md) for setup details.
 
@@ -160,6 +163,23 @@ Check:
 - Does the logged-in teacher have a valid `teacher_id`?
 
 The `subject_code` column is unique, so two subjects cannot use the same code.
+
+## Shared Link Or QR Code Opens The Wrong Domain
+
+Cause:
+
+- `APP_DOMAIN` is missing or set to the wrong value in `.streamlit/secrets.toml`.
+
+Fix:
+
+1. For local testing, use:
+
+```toml
+APP_DOMAIN = "http://localhost:8501"
+```
+
+2. For a deployed app, set it to the deployed app URL.
+3. Restart Streamlit after changing secrets.
 
 ## Camera Problems
 

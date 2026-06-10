@@ -17,6 +17,7 @@ The project is intentionally small and direct so learners can understand it. Try
 - `src/pipelines/voice_pipeline.py`: voice embeddings and speaker matching
 - `src/ui/base_layout.py`: shared CSS styling
 - `docs/`: project documentation
+- `src/**/__init__.py`: package marker files that make folder imports explicit
 
 ## Keep Responsibilities Separate
 
@@ -60,6 +61,13 @@ Examples:
 Put shared visual styling in `src/ui/base_layout.py`.
 
 Avoid scattering large CSS blocks across screen files unless the style belongs only to one local component.
+
+Current styling is split like this:
+
+- `base_layout.py` handles app-wide colors, gradients, typography, buttons, inputs, dialogs, alerts, and dataframe styling.
+- `header.py` and `footer.py` use small HTML snippets for the logo and footer.
+- `home_screen.py` uses local Markdown/HTML for the two portal cards.
+- `subject_card.py` uses local HTML for subject card layout and stat pills.
 
 ## Recommended Change Order
 
@@ -159,6 +167,8 @@ General checklist:
 - Attendance saves after confirmation.
 - Attendance records display.
 - Voice attendance handles missing voice profiles clearly.
+- Home screen shows the `Enter Student Portal` and `Enter Teacher Portal` cards correctly.
+- Shared subject links use `APP_DOMAIN` when configured.
 
 ## Documentation Checklist
 

@@ -196,14 +196,14 @@ segno is a QR code generation library.
 
 Where it is used:
 
-- subject sharing components
+- `src/components/dialog_share_subject.py`
 
 Why it is needed:
 
 - Teachers can share subject join information as a QR code.
 - Students can scan or open a shared link to enroll.
 
-The join link uses the `join-code` query parameter.
+The join link uses the `join-code` query parameter. Its base domain comes from optional `APP_DOMAIN` in Streamlit secrets, with `localhost:8501` as the fallback.
 
 ## `pillow`
 

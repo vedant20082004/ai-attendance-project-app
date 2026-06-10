@@ -80,6 +80,15 @@ If a shared link contains `join-code`, the app moves the user to the student flo
 
 This is how teacher sharing connects to student enrollment.
 
+The share dialog builds that link using:
+
+```python
+app_domain = st.secrets.get("APP_DOMAIN", "localhost:8501")
+join_url = f"{app_domain}/?join-code={subject_code}"
+```
+
+So `APP_DOMAIN` is optional. If it is not configured, shared links point to the local app.
+
 ## Home Screen
 
 File:
@@ -93,13 +102,15 @@ The home screen shows two choices:
 - Student Portal
 - Teacher Portal
 
-When a user clicks one, the app sets:
+Each portal is displayed as a styled card with an image, short description, and full-width button.
+
+When a user clicks `Enter Student Portal`, the app sets:
 
 ```python
 st.session_state["login_type"] = "student"
 ```
 
-or:
+When a user clicks `Enter Teacher Portal`, the app sets:
 
 ```python
 st.session_state["login_type"] = "teacher"
@@ -475,6 +486,29 @@ It controls:
 - input styles
 - dialog styling
 - dataframe styling
+- disabled button styling
+- gradient home and dashboard backgrounds
+- card-like column styling on the home screen
+
+The header and footer components also use small HTML snippets for the university logo and the footer text. The subject card component uses inline HTML for its card layout and stat pills.
+
+## Package Marker Files
+
+The project now includes `__init__.py` files inside the `src` package folders.
+
+Examples:
+
+```text
+src/__init__.py
+src/screens/__init__.py
+src/components/__init__.py
+```
+
+These files make Python treat those folders as packages. That supports imports like:
+
+```python
+from src.components.header import header_home
+```
 
 ## Mental Model
 

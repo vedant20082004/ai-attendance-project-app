@@ -166,6 +166,14 @@ The shared link uses the query parameter:
 join-code
 ```
 
+The base domain comes from Streamlit secrets:
+
+```toml
+APP_DOMAIN = "http://localhost:8501"
+```
+
+If `APP_DOMAIN` is not set, the code falls back to `localhost:8501`. The share dialog also renders a QR code with segno and labels it as a QR code for class joining.
+
 When the app sees this query parameter, it guides the student into quick enrollment.
 
 ## Take Photo Attendance

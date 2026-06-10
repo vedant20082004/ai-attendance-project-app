@@ -93,6 +93,13 @@ The AI logic is isolated in `src/pipelines/`.
 
 The shared Streamlit styling lives in `src/ui/base_layout.py`. It contains CSS injected into the Streamlit page.
 
+Some components also contain small local HTML snippets for layout polish:
+
+- `header.py` shows the logo.
+- `footer.py` shows the footer text.
+- `subject_card.py` renders subject cards and stat pills.
+- `home_screen.py` renders the Student Portal and Teacher Portal cards.
+
 ## Terms Used Throughout The Docs
 
 - Student ID: a UUID string from Supabase, not an integer.
@@ -100,6 +107,7 @@ The shared Streamlit styling lives in `src/ui/base_layout.py`. It contains CSS i
 - Attendance session: one confirmed attendance run for one subject at one timestamp.
 - Join code: the subject code students use to enroll.
 - Join link: a URL containing the `join-code` query parameter.
+- `APP_DOMAIN`: optional Streamlit secret used as the base domain for shared join links.
 
 ## Learning Scope
 

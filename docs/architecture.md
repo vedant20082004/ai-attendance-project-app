@@ -93,6 +93,8 @@ Examples:
 - attendance result dialog
 - voice attendance dialog
 
+Recent UI polish lives mostly in these components. The home screen uses custom Markdown blocks for the portal cards, the header and footer use small HTML snippets, and `subject_card.py` renders a styled card with gradients, stat pills, and optional footer actions.
+
 ### `src/database/`
 
 Database files hold Supabase setup and helper functions.
@@ -113,13 +115,19 @@ UI helper files contain shared styling.
 
 - `base_layout.py` injects CSS into Streamlit pages.
 
+The styling layer now defines app-wide color variables, gradient backgrounds, typography, button styles, form input styles, dialog styling, disabled-button styles, and dataframe borders. This keeps most visual rules centralized instead of repeating them in every screen.
+
+### Python Package Markers
+
+The `src` folders include `__init__.py` files. These files mark folders as Python packages, which makes imports such as `from src.screens.home_screen import home_screen` explicit and reliable.
+
 ## End-To-End Flows
 
 ## Home Screen Route Selection
 
 1. The app starts with `login_type = None`.
-2. `home_screen()` renders two choices: student and teacher.
-3. Clicking a portal button updates `st.session_state["login_type"]`.
+2. `home_screen()` renders two portal cards: Student Portal and Teacher Portal.
+3. Clicking `Enter Student Portal` or `Enter Teacher Portal` updates `st.session_state["login_type"]`.
 4. `st.rerun()` restarts the script.
 5. `app.py` now renders the selected screen.
 
@@ -155,11 +163,12 @@ UI helper files contain shared styling.
 ## Shared-Link Enrollment
 
 1. A teacher shares a link with a `join-code` query parameter.
-2. `app.py` reads `st.query_params.get("join-code")`.
-3. If the user is not already in student mode, the app switches to the student portal.
-4. Once a student is logged in, `auto_enroll_dialog()` opens.
-5. The student confirms enrollment.
-6. The app inserts into `subject_students`.
+2. `dialog_share_subject.py` builds the link from `APP_DOMAIN` in Streamlit secrets, falling back to `localhost:8501`.
+3. `app.py` reads `st.query_params.get("join-code")`.
+4. If the user is not already in student mode, the app switches to the student portal.
+5. Once a student is logged in, `auto_enroll_dialog()` opens.
+6. The student confirms enrollment.
+7. The app inserts into `subject_students`.
 
 ## Face Attendance
 
